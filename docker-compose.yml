@@ -1,14 +1,21 @@
 version: "3.8"
-
+#Servicios , es decir contenedores (barco) y los servicios son los contenedores 
 services:
+  #FRONT
   app:
+    #CONSTRUIR TODO DESDE LA RUTA FRONTEND
     build: ./frontend
+    #USAMOS EL PUERTO HOST : CONTENEDOR
     ports:
       - 80:5173
+    #MEDIO DE COMUNICACION ENTRE HOST Y CONTENEDOR (INOMBRABLE)
     volumes:
+      #SINCRONIZA EL SOURCE DEL APP CON EL SOURCE DEL HOST 
       - ./frontend/src:/app/src
+    #VARIABLES DE ENTORNO , SE PUEDEN DEFINIR COMO NOSOTROS QUEREMOS 
     environment:
       VITE_API_URL: http://localhost:3000
+  #BACK
   api:
     build: ./backend
     ports:
@@ -19,17 +26,22 @@ services:
       - ./backend/app:/app/app
     depends_on:
       - db
-  api-tests:
-    image: holamundo-api
-    environment:
-      DB_URL: mongodb://db/gamifytest
-    volumes:
-      - ./backend/app:/app/app
-      - ./backend/tests:/app/tests
-    depends_on:
-      - db
-    command: npm test
+    #PRUEBAS EN LA API 
+  # api-tests:
+  #   #HOLAMUNDO ES LA CARPETA Y EL SERVICIO QUE NOMBRAMOS NOSOTROS
+  #   image: holamundo-api
+  #   environment:
+  #   DB_URL: mongodb://db/gamifytest
+  #   volumes:
+  #    - ./backend/app:/app/app
+  #     - ./backend/tests:/app/tests
+  #   depends_on:
+  #     - db
+  #   #CLASES YA DEFINIDAS PARA TESTEAR LAS ESTRUCTURAS 
+  #   command: npm test
+  #   #BASE DE DATOS 
   db:
+    #IMAGEN DE MONGO Y LA VERSION DE UBUNTU LLAMADA FOCAL
     image: mongo:5.0.19-focal
     ports:
       - 27017:27017
