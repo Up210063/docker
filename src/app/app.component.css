@@ -2,15 +2,76 @@
     text-align: center;
     padding-top: 10px;
     padding-bottom: 10px;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #015661;
 }
 
 .contenedor {
-    margin: 0 auto; /*Centrar div*/
+    margin: 0 auto; /* Centrar div */
     width: 80%;
+    overflow-x: auto; /* Permite desplazamiento horizontal en pantallas pequeñas */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
 }
 
 p {
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 23px;
     color: #015661;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Estilos de la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+caption {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+    font-size: 16px;
+}
+
+th {
+    background-color: #015661;
+    color: white;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo alternativo para filas */
+}
+
+tr:hover {
+    background-color: #e0f7fa; /* Color de fondo al pasar el ratón */
+}
+
+button {
+    font-family: Lato, sans-serif;
+    font-size: 16px;
+    background-color: #015661;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #014751;
 }
