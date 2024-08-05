@@ -10,7 +10,7 @@ export class ServicioAPIService {
   constructor(private http: HttpClient) { };
 
   retornar() {
-    return this.http.get("https://gaia.inegi.org.mx/wscatgeo/mgee/").pipe(take(1));
+    return this.http.get("https://lambo.free.beeceptor.com/todos").pipe(take(1));
     /* El get permite indicar la URL del API que se quiere.
     El pipe(take(1)) es para que el API sólo sea llamado una vez, el get retorna un observable que
     cada vez que existan cambios en los datos de esa URL seremos informados, por esto sólo le decimos

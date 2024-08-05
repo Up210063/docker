@@ -14,26 +14,18 @@
 
       <thead>
         <tr>
-          <th>#</th>
-          <th>Estado</th>
-          <th>Abreviatura</th>
-          <th>Población</th>
-          <th>Población Femenina</th>
-          <th>Población Masculina</th>
-          <th>Vivienda</th>
+          <th>Nombre</th>
+          <th>Imagen</th>
+          <th>Descripción</th>
         </tr>
       </thead>
 
       <tbody>
         @for(i of array; track i) {
           <tr>
-            <td>{{i.cve_agee}}</td>
-            <td>{{i.nom_agee}}</td>
-            <td>{{i.nom_abrev}}</td>
-            <td>{{i.pob}}</td>
-            <td>{{i.pob_fem}}</td>
-            <td>{{i.pob_mas}}</td>
-            <td>{{i.viv}}</td>
+            <td>{{i.name}}</td>
+            <td>{{i.image_url}}</td>
+            <td>{{i.release_data}}</td>
           </tr>
         }
       </tbody>
