@@ -1,0 +1,43 @@
+<div class="titulo">
+  <h2>Práctica API en Componente</h2>
+  <h3>Gustavo Adolfo Avendaño Guevara</h3>
+  <br>
+  <button class="waves-effect waves-light btn-large" (click)="recuperarDatos()">Recuperar datos de API Inegi</button>
+</div>
+<br>
+
+@if(array.length != 0) {
+  <div class="contenedor">
+    <table class="striped">
+
+      <caption> <p>Tabla de Datos INEGI</p> </caption>
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Estado</th>
+          <th>Abreviatura</th>
+          <th>Población</th>
+          <th>Población Femenina</th>
+          <th>Población Masculina</th>
+          <th>Vivienda</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for(i of array; track i) {
+          <tr>
+            <td>{{i.cve_agee}}</td>
+            <td>{{i.nom_agee}}</td>
+            <td>{{i.nom_abrev}}</td>
+            <td>{{i.pob}}</td>
+            <td>{{i.pob_fem}}</td>
+            <td>{{i.pob_mas}}</td>
+            <td>{{i.viv}}</td>
+          </tr>
+        }
+      </tbody>
+
+    </table>
+  </div>
+}

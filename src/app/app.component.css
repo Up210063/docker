@@ -1,0 +1,16 @@
+.titulo {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.contenedor {
+    margin: 0 auto; /*Centrar div*/
+    width: 80%;
+}
+
+p {
+    font-family: Lato;
+    font-size: 23px;
+    color: #015661;
+}
