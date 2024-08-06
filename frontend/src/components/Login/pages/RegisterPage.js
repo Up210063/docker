@@ -5,14 +5,17 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useForm } from '../../common/hooks/useForm';
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 
 export const RegisterPage = () => {
   const [isPasswordShowed, setIsPasswordShowed] = useState(false);
-  const { firstName, email, password, onInputChange, formState } = useForm({
+  const { firstName, email, password, onInputChange } = useForm({
     firstName: "",
     email: "",
     password: ""
   });
+
+  const navigate = useNavigate(); // Inicializar useNavigate
 
   const onRegisterUser = async (e) => {
     e.preventDefault();
@@ -31,6 +34,7 @@ export const RegisterPage = () => {
 
       if (response.status === 200) {
         alert('Usuario registrado con éxito');
+        navigate('/'); // Redirigir a la página principal
       }
     } catch (error) {
       console.error('Error al registrar el usuario:', error);
