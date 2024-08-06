@@ -1,26 +1,26 @@
 package com.example.p02.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name="usuario")
+@Table(name = "users")
 public class User {
     @Id
-    @Column(name="id_usuario")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long idUsuario;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String nombre;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
-    private String contrasena;
-   
+    @Column(nullable = false)
+    private String password;
 }
