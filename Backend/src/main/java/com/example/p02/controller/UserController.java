@@ -1,3 +1,4 @@
+// UserController.java
 package com.example.p02.controller;
 
 import com.example.p02.dto.UserDTO;
@@ -23,6 +24,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al registrar el usuario");
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody UserDTO userDTO) {
+        try {
+            UserDTO authenticatedUser = userService.loginUser(userDTO.getEmail(), userDTO.getPassword());
+            return ResponseEntity.ok(authenticatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 }

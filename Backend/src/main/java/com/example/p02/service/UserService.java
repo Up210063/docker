@@ -1,3 +1,4 @@
+// UserService.java
 package com.example.p02.service;
 
 import com.example.p02.dto.UserDTO;
@@ -21,8 +22,22 @@ public class UserService {
             throw new IllegalArgumentException("El correo ya está registrado");
         }
 
-        // Encripta la contraseña aquí si es necesario
+        // Guardar el usuario
         User user = userMapper.toEntity(userDTO);
         userRepository.save(user);
+    }
+
+    public UserDTO loginUser(String email, String password) {
+        // Buscar el usuario por email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Comprobar la contraseña
+        if (!user.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Credenciales incorrectas");
+        }
+
+        // Devolver el DTO del usuario
+        return userMapper.toDto(user);
     }
 }
