@@ -4,6 +4,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useForm } from '../../common/hooks/useForm';
 import { useState } from 'react';
+import axios from 'axios';
 
 export const RegisterPage = () => {
   const [isPasswordShowed, setIsPasswordShowed] = useState(false);
@@ -13,14 +14,32 @@ export const RegisterPage = () => {
     password: ""
   });
 
-  const onRegisterUser = ( e ) => {
+  const onRegisterUser = async (e) => {
     e.preventDefault();
 
-    if ( !firstName || !email || !password ) {
-      alert('ingrese los datos');
+    if (!firstName || !email || !password) {
+      alert('Por favor, ingresa todos los datos.');
       return;
     }
 
+    try {
+      const response = await axios.post('http://localhost:8080/api/users/register', {
+        firstName,
+        email,
+        password
+      });
+
+      if (response.status === 200) {
+        alert('Usuario registrado con éxito');
+      }
+    } catch (error) {
+      console.error('Error al registrar el usuario:', error);
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data);
+      } else {
+        alert('Hubo un error al registrar el usuario');
+      }
+    }
   }
 
   return (
@@ -29,14 +48,14 @@ export const RegisterPage = () => {
       navPage="/"
       textPage="Ingresa"
       buttonText="Crear una cuenta"
-      outlineText="Ya tienes una cuenta?"
+      outlineText="¿Ya tienes una cuenta?"
     >
       <Box onSubmit={onRegisterUser} component={'form'} mb={6} mt={3}>
         <Box display={'flex'} flexDirection={'column'} gap={2}>
           <TextField 
             name='firstName'
-            value={ firstName }
-            onChange={ onInputChange }
+            value={firstName}
+            onChange={onInputChange}
             placeholder="Ingresa tu nombre"
             fullWidth
             label="Nombre"
@@ -44,8 +63,8 @@ export const RegisterPage = () => {
           />
           <TextField
             name='email'
-            value={ email }
-            onChange={ onInputChange }
+            value={email}
+            onChange={onInputChange}
             placeholder="Registra un correo"
             fullWidth
             label="Ingresa un correo electrónico"
@@ -53,8 +72,8 @@ export const RegisterPage = () => {
           />
           <TextField
             name='password'
-            value={ password }
-            onChange={ onInputChange }
+            value={password}
+            onChange={onInputChange}
             fullWidth
             placeholder="Crea una contraseña de 8 caracteres"
             label="Ingresa una contraseña"
