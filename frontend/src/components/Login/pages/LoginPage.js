@@ -33,6 +33,11 @@ export const LoginPage = () => {
 
       if (response.status === 200) {
         alert('Inicio de sesión exitoso');
+        
+        // Registro de la respuesta de la API y la información del usuario en la consola
+        console.log('Respuesta de la API:', response);
+        console.log('Usuario autenticado:', response.data);
+
         // Aquí podrías guardar el token de sesión o el usuario en el contexto
         loginUser(response.data);
         goToPage('/inicio');
