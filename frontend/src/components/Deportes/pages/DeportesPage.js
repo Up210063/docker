@@ -14,6 +14,7 @@ import {
   FormControl,
   InputLabel,
   Button,
+  CircularProgress
 } from '@mui/material';
 import Slider from "react-slick"; // Importar el componente Slider
 import { LayoutCMS } from '../../common';
@@ -100,10 +101,13 @@ export const DeportesPage = () => {
   }, [standingsTabValue]);
 
   const cardStyle = {
-    height: cardHeight,
+    height: '100%',
     border: '1px solid #ddd',
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     '&:hover': {
       transform: 'scale(1.05)',
       boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
@@ -137,6 +141,15 @@ export const DeportesPage = () => {
     ]
   };
 
+  // Function to truncate text to a specified number of words
+  const truncateText = (text, maxWords) => {
+    const words = text.split(' ');
+    if (words.length > maxWords) {
+      return words.slice(0, maxWords).join(' ') + '...';
+    }
+    return text;
+  };
+
   return (
     <LayoutCMS>
       <Grid item xs={12} md={12} lg={9} className='deportes-top'>
@@ -164,10 +177,10 @@ export const DeportesPage = () => {
           {/* Carrusel para las noticias de deportes */}
           <Grid item xs={12} sm={6} md={9}>
             {loading ? (
-              <Typography variant="body2" align="center">Cargando noticias de deportes...</Typography>
+              <CircularProgress />
             ) : error ? (
               <Typography variant="body2" align="center" color="error">{error}</Typography>
-            ) : sportsNews.length > 0 ? (
+            ) : sportsNews.length > 1 ? (
               <Slider {...settings}>
                 {sportsNews.map((newsItem, index) => (
                   <div key={index}>
@@ -180,19 +193,45 @@ export const DeportesPage = () => {
                         onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/220"; }} // Manejo de error de imagen
                       />
                       <CardContent>
-                        <Typography mb={1} variant="body2" color="text.secondary">
-                          {newsItem.content}
+                        <Typography variant="h6" gutterBottom>
+                          {truncateText(newsItem.title, 8)}
                         </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                          <Button variant="text">Leer más</Button>
-                        </Box>
+                        <Typography mb={1} variant="body2" color="text.secondary">
+                          {truncateText(newsItem.content, 20)}
+                        </Typography>
                       </CardContent>
+                      <Box sx={{ display: 'flex', justifyContent: 'center', paddingBottom: 2 }}>
+                        <Button variant="outlined" size="small" color='primary'>Leer más</Button>
+                      </Box>
                     </Card>
                   </div>
                 ))}
               </Slider>
             ) : (
-              <Typography variant="body2" align="center">No hay noticias de deportes disponibles</Typography>
+              sportsNews.map((newsItem, index) => (
+                <Grid item xs={12} md={6} key={index}>
+                  <Card sx={cardStyle} style={{ margin: '0 10px' }}>
+                    <CardMedia
+                      component="img"
+                      height="220"
+                      image={newsItem.img || "https://via.placeholder.com/220"}
+                      alt={newsItem.title || 'Noticia sin título'}
+                      onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/220"; }}
+                    />
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        {truncateText(newsItem.title, 8)}
+                      </Typography>
+                      <Typography mb={1} variant="body2" color="text.secondary">
+                        {truncateText(newsItem.content, 20)}
+                      </Typography>
+                    </CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', paddingBottom: 2 }}>
+                      <Button variant="outlined" size="small" color='primary'>Leer más</Button>
+                    </Box>
+                  </Card>
+                </Grid>
+              ))
             )}
           </Grid>
         </Grid>

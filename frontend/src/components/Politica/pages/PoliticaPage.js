@@ -9,7 +9,8 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  Box
+  Box,
+  Button
 } from '@mui/material';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { LayoutCMS } from '../../common';
@@ -85,6 +86,15 @@ export const PoliticaPage = () => {
     fetchPoliticalNews();
   }, []);
 
+  // Function to truncate text to a specified number of words
+  const truncateText = (text, maxWords) => {
+    const words = text.split(' ');
+    if (words.length > maxWords) {
+      return words.slice(0, maxWords).join(' ') + '...';
+    }
+    return text;
+  };
+
   return (
     <LayoutCMS>
       <Grid container spacing={2} className='politica'>
@@ -138,7 +148,7 @@ export const PoliticaPage = () => {
               <Slider {...settings}>
                 {politicalNews.length > 0 ? politicalNews.map((newsItem, index) => (
                   <div key={index}>
-                    <Card sx={cardStyle} style={{ margin: '0 10px' }}>
+                    <Card sx={cardStyle} style={{ margin: '0 10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <CardMedia
                         component="img"
                         height="250"
@@ -147,11 +157,21 @@ export const PoliticaPage = () => {
                         onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/250"; }}
                       />
                       <CardContent>
-                        <Typography variant="h6">{newsItem.title}</Typography>
+                        <Typography variant="h6">{truncateText(newsItem.title, 8)}</Typography> {/* Truncate title */}
                         <Typography variant="body2" color="text.secondary">
-                          {newsItem.content}
+                          {truncateText(newsItem.content, 20)} {/* Truncate content */}
                         </Typography>
                       </CardContent>
+                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: 2 }}>
+                        <Button 
+                          variant='outlined' 
+                          size='small' 
+                          color='primary' 
+                          sx={{ width: '90%' }} // Ensure the button takes the majority of the card's width
+                        >
+                          Leer más
+                        </Button>
+                      </Box>
                     </Card>
                   </div>
                 )) : (

@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Link as MuiLink,
   Divider,
   Box,
   Button,
@@ -24,12 +23,12 @@ export const ClimaPage = () => {
 
   const handleLocationObtained = ({ latitude, longitude }) => {
     fetchWeatherData(latitude, longitude)
-      .then(data => {
-        console.log("Datos del clima obtenidos:", data); // Verifica la respuesta de la API
+      .then((data) => {
+        console.log('Datos del clima obtenidos:', data); // Verifica la respuesta de la API
         setWeatherData(data);
         setLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         setError(error.message);
         setLoading(false);
       });
@@ -53,21 +52,21 @@ export const ClimaPage = () => {
 
   const translateWeatherDescription = (description) => {
     const translations = {
-      "clear sky": "CIELO DESPEJADO",
-      "few clouds": "POCAS NUBES",
-      "scattered clouds": "NUBES DISPERSAS",
-      "broken clouds": "NUBES ROTAS",
-      "overcast clouds": "NUBLADO",
-      "shower rain": "LLUVIA DE CHUBASCOS",
-      "rain": "LLUVIA",
-      "thunderstorm": "TORMENTA",
-      "snow": "NIEVE",
-      "mist": "NIEBLA",
-      "light rain": "LLUVIA LIGERA",
-      "moderate rain": "LLUVIA MODERADA",
-      "heavy intensity rain": "LLUVIA INTENSA",
-      "very heavy rain": "LLUVIA MUY INTENSA",
-      "extreme rain": "LLUVIA EXTREMA",
+      'clear sky': 'CIELO DESPEJADO',
+      'few clouds': 'POCAS NUBES',
+      'scattered clouds': 'NUBES DISPERSAS',
+      'broken clouds': 'NUBES ROTAS',
+      'overcast clouds': 'NUBLADO',
+      'shower rain': 'LLUVIA DE CHUBASCOS',
+      rain: 'LLUVIA',
+      thunderstorm: 'TORMENTA',
+      snow: 'NIEVE',
+      mist: 'NIEBLA',
+      'light rain': 'LLUVIA LIGERA',
+      'moderate rain': 'LLUVIA MODERADA',
+      'heavy intensity rain': 'LLUVIA INTENSA',
+      'very heavy rain': 'LLUVIA MUY INTENSA',
+      'extreme rain': 'LLUVIA EXTREMA',
     };
     return translations[description.toLowerCase()] || description.toUpperCase();
   };
@@ -93,35 +92,41 @@ export const ClimaPage = () => {
   // Petición para obtener noticias de clima
   useEffect(() => {
     setLoading(true);
-    console.log("Realizando petición fetch para obtener noticias de clima..."); // Log antes de la solicitud
+    console.log('Realizando petición fetch para obtener noticias de clima...'); // Log antes de la solicitud
 
-    fetch("http://localhost:8080/api/notices/category/clima")
-      .then(response => {
-        console.log("Respuesta recibida:", response); // Log para verificar la respuesta de la API
+    fetch('http://localhost:8080/api/notices/category/clima')
+      .then((response) => {
+        console.log('Respuesta recibida:', response); // Log para verificar la respuesta de la API
 
         if (!response.ok) {
           throw new Error('Error al obtener las noticias de clima');
         }
         return response.json();
       })
-      .then(data => {
-        console.log("Datos de noticias de clima recibidos:", data); // Log de los datos recibidos
+      .then((data) => {
+        console.log('Datos de noticias de clima recibidos:', data); // Log de los datos recibidos
         setClimateNews(data);
         setLoading(false);
       })
-      .catch(error => {
-        console.error("Error al obtener las noticias de clima:", error); // Log de errores
+      .catch((error) => {
+        console.error('Error al obtener las noticias de clima:', error); // Log de errores
         setError(error.message);
         setLoading(false);
       });
   }, []);
 
+  // Function to truncate text to a specified number of words
+  const truncateText = (text, maxWords) => {
+    const words = text.split(' ');
+    if (words.length > maxWords) {
+      return words.slice(0, maxWords).join(' ') + '...';
+    }
+    return text;
+  };
+
   return (
     <LayoutCMS>
-      <LocationProvider
-        onLocationObtained={handleLocationObtained}
-        onError={handleLocationError}
-      />
+      <LocationProvider onLocationObtained={handleLocationObtained} onError={handleLocationError} />
 
       <Divider style={{ marginTop: 20, marginBottom: 20 }} />
       <Grid container spacing={2} style={{ marginTop: 20 }}>
@@ -134,15 +139,28 @@ export const ClimaPage = () => {
               alt="Calor"
             />
             <CardContent>
-              <Typography fontWeight={"bold"} fontSize={"20px"} mb={1} variant="h5">Ola de calor extremo azota varias regiones del país</Typography>
-              <Typography mb={2} variant="body2" color="text.secondary">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              <Typography fontWeight={'bold'} fontSize={'20px'} mb={1} variant="h5">
+                {truncateText('Ola de calor extremo azota varias regiones del país', 8)}
               </Typography>
-              <Button variant='outlined'>Leer más</Button>
+              <Typography mb={2} variant="body2" color="text.secondary">
+                {truncateText(
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                  20
+                )}
+              </Typography>
+              <Button variant="outlined">Leer más</Button>
             </CardContent>
           </Card>
 
-          <Typography variant="h6" align="center" style={{ marginTop: 30, marginBottom: 30 }} textAlign={"left"} fontWeight={"bold"}>Últimas Noticias sobre el Clima</Typography>
+          <Typography
+            variant="h6"
+            align="center"
+            style={{ marginTop: 30, marginBottom: 30 }}
+            textAlign={'left'}
+            fontWeight={'bold'}
+          >
+            Últimas Noticias sobre el Clima
+          </Typography>
           <Grid container spacing={2}>
             {climateNews.map((newsItem, index) => (
               <Grid item xs={12} sm={4} md={4} key={index}>
@@ -150,14 +168,20 @@ export const ClimaPage = () => {
                   <CardMedia
                     component="img"
                     height="240"
-                    image={newsItem.img || "https://via.placeholder.com/240"}
+                    image={newsItem.img || 'https://via.placeholder.com/240'}
                     alt={newsItem.title}
                   />
                   <CardContent>
-                    <Typography variant="body2" color="text.secondary" align="center" gutterBottom>
-                      {newsItem.content} {/* Mostrar contenido de la noticia */}
+                    <Typography variant="h6" color="text.primary" align="center" gutterBottom>
+                      {truncateText(newsItem.title, 8)} {/* Mostrar título truncado */}
                     </Typography>
-                    <Button variant='outlined' size='small' color='primary'>Leer más</Button> {/* Botón "Leer más" con estilo consistente */}
+                    <Typography variant="body2" color="text.secondary" align="center" gutterBottom>
+                      {truncateText(newsItem.content, 20)} {/* Mostrar contenido truncado */}
+                    </Typography>
+                    <Button variant="outlined" size="small" color="primary">
+                      Leer más
+                    </Button>{' '}
+                    {/* Botón "Leer más" con estilo consistente */}
                   </CardContent>
                 </Card>
               </Grid>
@@ -170,27 +194,51 @@ export const ClimaPage = () => {
           <Card sx={hoverEffectStyles}>
             <CardContent>
               {loading ? (
-                <Typography variant="body2" align="center">Cargando datos del clima...</Typography>
+                <Typography variant="body2" align="center">
+                  Cargando datos del clima...
+                </Typography>
               ) : error ? (
-                <Typography variant="body2" align="center" color="error">{error}</Typography>
+                <Typography variant="body2" align="center" color="error">
+                  {error}
+                </Typography>
               ) : weatherData ? ( // Verificar si weatherData no es null antes de acceder a sus propiedades
                 <Box display="flex" flexDirection="column" alignItems="center">
-                  <Typography variant="h6" align="center">Clima Actual</Typography>
+                  <Typography variant="h6" align="center">
+                    Clima Actual
+                  </Typography>
                   <Divider style={{ marginBottom: 10 }} />
-                  <img src={getWeatherIcon(weatherData.weather[0].icon)} alt="Weather Icon" width={80} style={{ marginBottom: 10 }} />
-                  <Typography variant="h4" color="primary" gutterBottom>{weatherData.name}</Typography>
-                  <Typography variant="h5" gutterBottom>{`${Math.round(weatherData.main.temp)} °C`}</Typography>
+                  <img
+                    src={getWeatherIcon(weatherData.weather[0].icon)}
+                    alt="Weather Icon"
+                    width={80}
+                    style={{ marginBottom: 10 }}
+                  />
+                  <Typography variant="h4" color="primary" gutterBottom>
+                    {weatherData.name}
+                  </Typography>
+                  <Typography variant="h5" gutterBottom>
+                    {`${Math.round(weatherData.main.temp)} °C`}
+                  </Typography>
                   <Typography variant="body1" color="textSecondary" gutterBottom>
                     {translateWeatherDescription(weatherData.weather[0].description)}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">{`Viento: ${Math.round(weatherData.wind.speed)} m/s`}</Typography>
+                  <Typography variant="body2" color="textSecondary">{`Viento: ${Math.round(
+                    weatherData.wind.speed
+                  )} m/s`}</Typography>
                   {/* Contador hasta el fin del día */}
-                  <Typography variant="body2" color="textSecondary" align="center" style={{ marginTop: 10 }}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    align="center"
+                    style={{ marginTop: 10 }}
+                  >
                     {`Tiempo restante del día: ${timeRemaining}`}
                   </Typography>
                 </Box>
               ) : (
-                <Typography variant="body2" align="center" color="error">Datos del clima no disponibles</Typography>
+                <Typography variant="body2" align="center" color="error">
+                  Datos del clima no disponibles
+                </Typography>
               )}
             </CardContent>
           </Card>

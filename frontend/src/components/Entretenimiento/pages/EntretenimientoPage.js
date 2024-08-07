@@ -76,6 +76,15 @@ export const EntretenimientoPage = () => {
       });
   }, []);
 
+  // Function to truncate text to a specified number of words
+  const truncateText = (text, maxWords) => {
+    const words = text.split(' ');
+    if (words.length > maxWords) {
+      return words.slice(0, maxWords).join(' ') + '...';
+    }
+    return text;
+  };
+
   return (
     <LayoutCMS>
       <Grid container spacing={4} style={{ marginTop: 20 }}>
@@ -118,6 +127,7 @@ export const EntretenimientoPage = () => {
                     <Card
                       onMouseEnter={handleNewsMouseEnter}
                       onMouseLeave={handleNewsMouseLeave}
+                      sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}
                     >
                       <CardMedia
                         component="img"
@@ -127,11 +137,16 @@ export const EntretenimientoPage = () => {
                         onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/140"; }} // Manejo de error de imagen
                       />
                       <CardContent>
-                        <Typography variant="h6">{newsItem.title}</Typography>
+                        <Typography variant="h6">{truncateText(newsItem.title, 8)}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {newsItem.content}
+                          {truncateText(newsItem.content, 20)}
                         </Typography>
                       </CardContent>
+                      <Box sx={{ display: 'flex', justifyContent: 'center', paddingBottom: 2 }}>
+                        <Button variant='outlined' size='small' color='primary'>
+                          Leer más
+                        </Button>
+                      </Box>
                     </Card>
                   </Grid>
                 ))
