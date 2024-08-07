@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container,
   Grid,
   Typography,
   Card,
@@ -9,7 +8,6 @@ import {
   Tabs,
   Tab,
   Box,
-  Link as MuiLink,
   Fade,
   Select,
   MenuItem,
@@ -34,6 +32,9 @@ export const DeportesPage = () => {
   const [nbaStandings, setNbaStandings] = useState([]);
   const [mlbStandings, setMlbStandings] = useState([]);
   const [visibleTeams, setVisibleTeams] = useState(10);
+  const [sportsNews, setSportsNews] = useState([]); // Estado para las noticias de deportes
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const cardHeight = 320;
 
@@ -49,6 +50,33 @@ export const DeportesPage = () => {
     setVisibleTeams(event.target.value);
   };
 
+  // Fetch de noticias de deportes
+  useEffect(() => {
+    setLoading(true);
+    console.log("Realizando petición fetch para obtener noticias de deportes...");
+
+    fetch("http://localhost:8080/api/notices/category/deportes")
+      .then(response => {
+        console.log("Respuesta recibida:", response);
+
+        if (!response.ok) {
+          throw new Error('Error al obtener las noticias de deportes');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Datos de noticias de deportes recibidos:", data);
+        setSportsNews(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error al obtener las noticias de deportes:", error);
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  // Fetch de standings
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -82,6 +110,7 @@ export const DeportesPage = () => {
     <LayoutCMS>
       <Grid item xs={12} md={12} lg={9} className='deportes-top'>
         <Grid container spacing={2}>
+          {/* Tarjeta de "Lo último" */}
           <Grid item xs={12} sm={6} md={3}>
             <Card sx={cardStyle}>
               <CardContent>
@@ -100,62 +129,37 @@ export const DeportesPage = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={cardStyle}>
-              <CardMedia
-                component="img"
-                height="220"
-                image="https://tvazteca.brightspotcdn.com/98/7f/814862b949a491253cc74484f13d/mazatlan-vs-nashville-leagues-cup.jpeg"
-                alt="Placeholder image"
-              />
-              <CardContent>
-                <Typography mb={1} variant="body2" color="text.secondary">
-                  Mazatlán vs Nashville, un emocionante partido que se lleva
-                  Mazatlán por un marcador 2-0..
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button variant="text">Leer más</Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={cardStyle}>
-              <CardMedia
-                component="img"
-                height="220"
-                image="https://www.tudn.com/api/image/x/us/futbol/tormenta-electrica-retrasa-el-inicio-del-segundo-tiempo-entre-toluca-y-chicago-video"
-                alt="Placeholder image"
-              />
-              <CardContent>
-                <Typography mb={1} variant="body2" color="text.secondary">
-                  Una tormenta eléctrica retrasa el segundo tiempo del partido
-                  Toluca vs Chicago Fire.
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button variant="text">Leer más</Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={cardStyle}>
-              <CardMedia
-                component="img"
-                height="220"
-                image="https://cdn.milenio.com/uploads/media/2024/07/30/fc-juarez-vs-dallas-canal.jpeg"
-                alt="Placeholder image"
-              />
-              <CardContent>
-                <Typography mb={1} variant="body2" color="text.secondary">
-                  FC DALLAS 0-2 FC JUÁREZ | Salieron BRAVOS los fronterizos.
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button variant="text">Leer más</Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+
+          {/* Mostrar las siguientes tres noticias de deportes obtenidas de la API */}
+          {loading ? (
+            <Typography variant="body2" align="center">Cargando noticias de deportes...</Typography>
+          ) : error ? (
+            <Typography variant="body2" align="center" color="error">{error}</Typography>
+          ) : sportsNews.length > 0 ? (
+            sportsNews.slice(0, 3).map((newsItem, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card sx={cardStyle}>
+                  <CardMedia
+                    component="img"
+                    height="220"
+                    image={newsItem.img || "https://via.placeholder.com/220"} // URL de imagen desde la API
+                    alt={newsItem.title || 'Noticia sin título'}
+                    onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/220"; }} // Manejo de error de imagen
+                  />
+                  <CardContent>
+                    <Typography mb={1} variant="body2" color="text.secondary">
+                      {newsItem.content}
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button variant="text">Leer más</Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <Typography variant="body2" align="center">No hay noticias de deportes disponibles</Typography>
+          )}
         </Grid>
       </Grid>
 
