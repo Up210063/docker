@@ -8,12 +8,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/notices")
 public class NoticeController {
 
     @Autowired
     private NoticeService noticeService;
+
+    @GetMapping
+    public ResponseEntity<List<NoticeDTO>> getAllNotices() {
+        List<NoticeDTO> notices = noticeService.getAllNotices();
+        return ResponseEntity.ok(notices);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<String> createNotice(@RequestBody NoticeDTO noticeDTO) {
