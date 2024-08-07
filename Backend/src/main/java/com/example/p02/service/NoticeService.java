@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,8 +40,24 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
-    // Método para eliminar una noticia
     public void deleteNotice(Long id) {
         noticeRepository.deleteById(id);
+    }
+
+    // Method to update notice
+    public void updateNotice(Long id, NoticeDTO noticeDTO) throws Exception {
+        Optional<Notice> existingNoticeOpt = noticeRepository.findById(id);
+        if (existingNoticeOpt.isPresent()) {
+            Notice existingNotice = existingNoticeOpt.get();
+            existingNotice.setTitle(noticeDTO.getTitle());
+            existingNotice.setDate(noticeDTO.getDate());
+            existingNotice.setContent(noticeDTO.getContent());
+            existingNotice.setAuthor(noticeDTO.getAuthor());
+            existingNotice.setCategory(noticeDTO.getCategory());
+            existingNotice.setImg(noticeDTO.getImg());
+            noticeRepository.save(existingNotice);
+        } else {
+            throw new Exception("Noticia no encontrada");
+        }
     }
 }

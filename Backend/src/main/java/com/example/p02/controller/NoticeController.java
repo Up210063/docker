@@ -39,7 +39,6 @@ public class NoticeController {
         }
     }
 
-    // Método para eliminar una noticia
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteNotice(@PathVariable Long id) {
         try {
@@ -47,6 +46,17 @@ public class NoticeController {
             return ResponseEntity.ok("Noticia eliminada exitosamente");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la noticia");
+        }
+    }
+
+    // Add this method for updating notices
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateNotice(@PathVariable Long id, @RequestBody NoticeDTO noticeDTO) {
+        try {
+            noticeService.updateNotice(id, noticeDTO);
+            return ResponseEntity.ok("Noticia actualizada exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la noticia");
         }
     }
 }
