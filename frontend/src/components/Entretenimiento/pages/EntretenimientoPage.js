@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Typography,
   Grid,
+  Typography,
   Card,
   CardContent,
   CardMedia,
@@ -10,11 +10,14 @@ import {
   Button,
 } from '@mui/material';
 import { LayoutCMS } from '../../common';
-import useFetchMovies from './useFetchMovies';
+import useFetchMovies from './useFetchMovies'; // Hook para obtener películas recientes
 import Opiniones from '../../../components/common/components/Opiniones';
 
 export const EntretenimientoPage = () => {
-  const { movies, loading, error } = useFetchMovies();
+  const { movies, loading: moviesLoading, error: moviesError } = useFetchMovies(); // Estado para películas
+  const [entertainmentNews, setEntertainmentNews] = useState([]);
+  const [newsLoading, setNewsLoading] = useState(true);
+  const [newsError, setNewsError] = useState(null);
 
   // Función para manejar el click en el botón de ver tráiler
   const handleWatchTrailer = (trailerUrl) => {
@@ -47,11 +50,37 @@ export const EntretenimientoPage = () => {
     e.currentTarget.style.transform = 'scale(1)';
   };
 
+  // Fetch noticias de entretenimiento
+  useEffect(() => {
+    setNewsLoading(true);
+    console.log("Realizando petición fetch para obtener noticias de entretenimiento...");
+
+    fetch("http://localhost:8080/api/notices/category/entretenimiento")
+      .then(response => {
+        console.log("Respuesta recibida:", response);
+
+        if (!response.ok) {
+          throw new Error('Error al obtener las noticias de entretenimiento');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Datos de noticias de entretenimiento recibidos:", data);
+        setEntertainmentNews(data);
+        setNewsLoading(false);
+      })
+      .catch(error => {
+        console.error("Error al obtener las noticias de entretenimiento:", error);
+        setNewsError(error.message);
+        setNewsLoading(false);
+      });
+  }, []);
+
   return (
     <LayoutCMS>
       <Grid container spacing={4} style={{ marginTop: 20 }}>
         <Grid item xs={12} md={8}>
-          {/* Noticias Entretenimiento */}
+          {/* Noticias de Entretenimiento */}
           <Card
             onMouseEnter={handleNewsMouseEnter}
             onMouseLeave={handleNewsMouseLeave}
@@ -75,70 +104,46 @@ export const EntretenimientoPage = () => {
           <Typography variant="h6" style={{ marginTop: 20 }}>
             Noticias Mundiales
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Card
-                onMouseEnter={handleNewsMouseEnter}
-                onMouseLeave={handleNewsMouseLeave}
-              >
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://s3.amazonaws.com/businessinsider.mx/wp-content/uploads/2022/08/11163321/Business_Insider_Mexico_recisio%CC%81n.jpg"
-                  alt="Placeholder image"
-                />
-                <CardContent>
-                  <Typography variant="h6">EE.UU.</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    La expansión de Hollywood hacia el streaming: ¿Es el futuro?
-                  </Typography>
-                </CardContent>
-              </Card>
+
+          {newsLoading ? (
+            <CircularProgress />
+          ) : newsError ? (
+            <Typography color="error">Error al cargar las noticias de entretenimiento</Typography>
+          ) : (
+            <Grid container spacing={2}>
+              {/* Noticias de entretenimiento desde la API */}
+              {entertainmentNews.length > 0 ? (
+                entertainmentNews.slice(0, 3).map((newsItem, index) => (
+                  <Grid item xs={12} md={6} key={index}>
+                    <Card
+                      onMouseEnter={handleNewsMouseEnter}
+                      onMouseLeave={handleNewsMouseLeave}
+                    >
+                      <CardMedia
+                        component="img"
+                        height="140"
+                        image={newsItem.img || "https://via.placeholder.com/140"}
+                        alt={newsItem.title || 'Noticia sin título'}
+                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/140"; }} // Manejo de error de imagen
+                      />
+                      <CardContent>
+                        <Typography variant="h6">{newsItem.title}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {newsItem.content}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))
+              ) : (
+                <Typography variant="body2" align="center">No hay noticias de entretenimiento disponibles</Typography>
+              )}
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Card
-                onMouseEnter={handleNewsMouseEnter}
-                onMouseLeave={handleNewsMouseLeave}
-              >
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://www.larepublica.ec/wp-content/uploads/2021/10/fESTIVAL-DE-CINE-DE-LONDRES-2021.jpg"
-                  alt="Placeholder image"
-                />
-                <CardContent>
-                  <Typography variant="h6">REINO UNIDO</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Festival de cine de Londres: Lo más destacado del año.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={12}>
-              <Card
-                onMouseEnter={handleNewsMouseEnter}
-                onMouseLeave={handleNewsMouseLeave}
-              >
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://stateless-fueradefoco.storage.googleapis.com/wp-content/uploads/2022/12/29214736/anime-crecimiento-2022-1-1024x622.webp"
-                  alt="Placeholder image"
-                />
-                <CardContent>
-                  <Typography variant="h6">JAPÓN</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    El auge del anime en Japón está creciendo a niveles exorbitantes.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+          )}
 
           <Typography variant="h6" style={{ marginTop: 20 }}>
             Opiniones
           </Typography>
-
           <Opiniones />
         </Grid>
 
@@ -147,9 +152,9 @@ export const EntretenimientoPage = () => {
           <Typography variant="h6" component="div" gutterBottom>
             Las películas más recientes hasta el momento
           </Typography>
-          {loading ? (
+          {moviesLoading ? (
             <CircularProgress />
-          ) : error ? (
+          ) : moviesError ? (
             <Typography color="error">Error al cargar las películas</Typography>
           ) : (
             <Grid container spacing={2}>
