@@ -1,5 +1,3 @@
-// src/components/ListNotices/components/GridListNotices.js
-
 import React from "react";
 import {
   Card,
@@ -9,6 +7,7 @@ import {
   CardActionArea,
   Box,
   IconButton,
+  Grid,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -42,56 +41,57 @@ export const GridListNotices = ({ notices }) => {
     navigate("/nueva-noticia", { state: { notice } });
   };
 
+  // Function to truncate content to a specified number of words
+  const truncateContent = (content, maxWords) => {
+    const words = content.split(" ");
+    if (words.length > maxWords) {
+      return words.slice(0, maxWords).join(" ") + "...";
+    }
+    return content;
+  };
+
   return (
     <Box>
       {notices.map((notice) => (
-        <Card key={notice.id} mb={5} className={"news-card"}>
+        <Card key={notice.id} className="news-card" sx={{ marginBottom: 2, display: "flex" }}>
           <CardMedia
-            className={"news-card-image"}
+            className="news-card-image"
             image={notice.img || "https://via.placeholder.com/150"}
             title={notice.title}
             component="img"
-            height="200"
+            sx={{ width: 200 }}
           />
-          <CardActionArea>
-            <CardContent className={"news-card-content"}>
-              <Box
-                mb={2}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-              >
-                <Typography component="h5" variant="h5">
-                  {notice.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {notice.author}
-                </Typography>
-              </Box>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="p"
-                mb={1}
-              >
-                {notice.content}
-              </Typography>
-              <Typography variant="caption" color="textSecondary" component="p">
-                Fecha de Publicación: {notice.date}
-              </Typography>
-              <Box
-                mt={2}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"flex-end"}
-              >
-                <IconButton onClick={() => handleDelete(notice.id)}>
-                  <DeleteIcon />
-                </IconButton>
-                <IconButton onClick={() => handleEdit(notice)}>
-                  <EditIcon />
-                </IconButton>
-              </Box>
+          <CardActionArea sx={{ flex: 1 }}>
+            <CardContent className="news-card-content" sx={{ display: "flex", alignItems: "center" }}>
+              <Grid container spacing={2}>
+                <Grid item xs={10}>
+                  <Box mb={2}>
+                    <Typography component="h5" variant="h5">
+                      {notice.title}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" color="textSecondary" component="p" mb={1}>
+                    <strong>Autor:</strong> {notice.author}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p" mb={1}>
+                    <strong>Categoría:</strong> {notice.category}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p" mb={1}>
+                    <strong>Contenido:</strong> {truncateContent(notice.content, 20)}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p" mb={1}>
+                    <strong>Fecha de Publicación:</strong> {notice.date}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2} container alignItems="center" justifyContent="flex-end">
+                  <IconButton onClick={() => handleDelete(notice.id)} sx={{ color: "red" }}>
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleEdit(notice)} sx={{ color: "blue" }}>
+                    <EditIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
             </CardContent>
           </CardActionArea>
         </Card>

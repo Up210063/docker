@@ -10,6 +10,7 @@ public class NoticeMapper {
 
     public Notice toEntity(NoticeDTO noticeDTO) {
         Notice notice = new Notice();
+        notice.setId(noticeDTO.getId()); // Ensure the ID is set for updates
         notice.setTitle(noticeDTO.getTitle());
         notice.setDate(noticeDTO.getDate());
         notice.setContent(noticeDTO.getContent());

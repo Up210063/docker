@@ -11,11 +11,48 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Checkbox,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
 } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { useNavigate, useLocation } from "react-router-dom";
+
+// Sidebar Component
+const Sidebar = ({ fields }) => (
+  <Paper
+    elevation={3}
+    sx={{
+      height: "100%",
+      padding: 2,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+    }}
+  >
+    <Typography variant="h6" mb={2}>
+      Completeness Check
+    </Typography>
+    <List>
+      {fields.map(({ label, isComplete }) => (
+        <React.Fragment key={label}>
+          <ListItem>
+            <ListItemIcon>
+              <Checkbox checked={isComplete} disableRipple />
+            </ListItemIcon>
+            <ListItemText primary={label} />
+          </ListItem>
+          <Divider />
+        </React.Fragment>
+      ))}
+    </List>
+  </Paper>
+);
 
 export const NewNoticePage = () => {
   const navigate = useNavigate();
@@ -44,49 +81,55 @@ export const NewNoticePage = () => {
   }, [location.state]);
 
   // Handle save for both creating and editing
-  const handleSave = async () => {
-    const newNotice = {
-      title,
-      date: date.format("YYYY-MM-DD"),
-      author,
-      content,
-      category,
-      img: url, // Use the correct key for the image URL
-    };
-
-    try {
-      let response;
-      if (noticeId) {
-        // Edit existing notice
-        response = await fetch(`http://localhost:8080/api/notices/${noticeId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newNotice),
-        });
-      } else {
-        // Create new notice
-        response = await fetch("http://localhost:8080/api/notices/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newNotice),
-        });
-      }
-
-      if (response.ok) {
-        alert(noticeId ? "Noticia actualizada exitosamente" : "Noticia guardada exitosamente");
-        navigate('/lista-noticias');
-      } else {
-        alert("Error al guardar la noticia");
-      }
-    } catch (error) {
-      console.error("Error al guardar la noticia:", error);
-      alert("Error de red al guardar la noticia");
-    }
+const handleSave = async () => {
+  const newNotice = {
+    title,
+    date: date.format("YYYY-MM-DD"),
+    author,
+    content,
+    category,
+    img: url, // Use the correct key for the image URL
   };
+
+  try {
+    let response;
+    if (noticeId) {
+      // Edit existing notice
+      response = await fetch(`http://localhost:8080/api/notices/${noticeId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newNotice),
+      });
+    } else {
+      // Create new notice
+      response = await fetch("http://localhost:8080/api/notices/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newNotice),
+      });
+    }
+
+    if (response.ok) {
+      alert(
+        noticeId
+          ? "Noticia actualizada exitosamente"
+          : "Noticia guardada exitosamente"
+      );
+      navigate("/lista-noticias");
+    } else {
+      const errorMessage = await response.text();
+      alert(`Error al guardar la noticia: ${errorMessage}`);
+    }
+  } catch (error) {
+    console.error("Error al guardar la noticia:", error);
+    alert("Error de red al guardar la noticia");
+  }
+};
+
 
   // Reset form fields
   const resetForm = () => {
@@ -99,10 +142,23 @@ export const NewNoticePage = () => {
     setNoticeId(null); // Reset notice ID
   };
 
+  const fields = [
+    { label: "Título", isComplete: !!title },
+    { label: "Fecha", isComplete: !!date },
+    { label: "Autor", isComplete: !!author },
+    { label: "Contenido", isComplete: !!content },
+    { label: "URL Imagen", isComplete: !!url },
+    { label: "Categoría", isComplete: !!category },
+  ];
+
   return (
     <div>
       <Container>
         <Grid container spacing={2} style={{ marginTop: 20 }}>
+          <Grid item xs={12} md={3}>
+            {/* Sidebar */}
+            <Sidebar fields={fields} />
+          </Grid>
           <Grid item xs={12} md={9}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -147,7 +203,11 @@ export const NewNoticePage = () => {
                       value={date}
                       onChange={(newValue) => setDate(newValue)}
                       renderInput={(params) => (
-                        <TextField {...params} fullWidth sx={{ display: "none" }} />
+                        <TextField
+                          {...params}
+                          fullWidth
+                          sx={{ display: "none" }}
+                        />
                       )}
                     />
                   </LocalizationProvider>
@@ -160,10 +220,16 @@ export const NewNoticePage = () => {
                 <TextField
                   fullWidth
                   multiline
-                  rows={15}
+                  rows={10} // Adjust rows to fit more content if needed
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   margin="normal"
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      minHeight: '150px', // Ensures minimum height for text area
+                    },
+                    overflow: 'auto',
+                  }}
                 />
                 <Box container spacing={2} className="new-notice-form">
                   <Grid item xs={6}>
@@ -209,7 +275,11 @@ export const NewNoticePage = () => {
                 >
                   Cancelar
                 </Button>
-                <Button variant="contained" color="primary" onClick={handleSave}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                >
                   {noticeId ? "Actualizar" : "Guardar"}
                 </Button>
               </Box>

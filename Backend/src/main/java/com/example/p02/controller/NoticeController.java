@@ -17,18 +17,21 @@ public class NoticeController {
     @Autowired
     private NoticeService noticeService;
 
+    // Retrieve all notices
     @GetMapping
     public ResponseEntity<List<NoticeDTO>> getAllNotices() {
         List<NoticeDTO> notices = noticeService.getAllNotices();
         return ResponseEntity.ok(notices);
     }
 
+    // Retrieve notices by category
     @GetMapping("/category/{category}")
     public ResponseEntity<List<NoticeDTO>> getNoticesByCategory(@PathVariable String category) {
         List<NoticeDTO> notices = noticeService.getNoticesByCategory(category);
         return ResponseEntity.ok(notices);
     }
 
+    // Create a new notice
     @PostMapping("/create")
     public ResponseEntity<String> createNotice(@RequestBody NoticeDTO noticeDTO) {
         try {
@@ -39,6 +42,7 @@ public class NoticeController {
         }
     }
 
+    // Delete a notice
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteNotice(@PathVariable Long id) {
         try {
@@ -49,7 +53,7 @@ public class NoticeController {
         }
     }
 
-    // Add this method for updating notices
+    // Update an existing notice
     @PutMapping("/{id}")
     public ResponseEntity<String> updateNotice(@PathVariable Long id, @RequestBody NoticeDTO noticeDTO) {
         try {

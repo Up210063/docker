@@ -21,6 +21,7 @@ public class NoticeService {
     @Autowired
     private NoticeMapper noticeMapper;
 
+    // Retrieve all notices
     public List<NoticeDTO> getAllNotices() {
         List<Notice> notices = noticeRepository.findAll();
         return notices.stream()
@@ -28,6 +29,7 @@ public class NoticeService {
                 .collect(Collectors.toList());
     }
 
+    // Retrieve notices by category
     public List<NoticeDTO> getNoticesByCategory(String category) {
         List<Notice> notices = noticeRepository.findByCategory(category);
         return notices.stream()
@@ -35,16 +37,18 @@ public class NoticeService {
                 .collect(Collectors.toList());
     }
 
+    // Save a new notice
     public void saveNotice(NoticeDTO noticeDTO) {
         Notice notice = noticeMapper.toEntity(noticeDTO);
         noticeRepository.save(notice);
     }
 
+    // Delete a notice by ID
     public void deleteNotice(Long id) {
         noticeRepository.deleteById(id);
     }
 
-    // Method to update notice
+    // Update an existing notice
     public void updateNotice(Long id, NoticeDTO noticeDTO) throws Exception {
         Optional<Notice> existingNoticeOpt = noticeRepository.findById(id);
         if (existingNoticeOpt.isPresent()) {

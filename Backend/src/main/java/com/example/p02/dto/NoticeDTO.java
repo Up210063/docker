@@ -7,9 +7,9 @@ import lombok.Data;
 public class NoticeDTO {
     private Long id;
     private String title;
-    private String date; // Asegúrate de devolver la fecha como String o LocalDate
+    private String date; // Ensure this matches the type you're using, e.g., String or LocalDate
     private String content;
     private String author;
     private String category;
-    private String img; // Incluye el campo de imagen en el DTO
+    private String img; // Ensure this is included in the DTO
 }

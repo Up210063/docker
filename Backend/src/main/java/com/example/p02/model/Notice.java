@@ -20,9 +20,9 @@ public class Notice {
     private String title;
 
     @Column(nullable = false)
-    private String date; // O puedes usar LocalDate si prefieres un tipo de dato de fecha más fuerte
+    private String date; // Or use LocalDate if you prefer a more robust date type
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(nullable = false)
@@ -32,5 +32,5 @@ public class Notice {
     private String category;
 
     @Column(nullable = false)
-    private String img; // Asegúrate de tener este campo para la imagen
+    private String img; // Ensure this field exists for the image URL
 }
