@@ -26,33 +26,7 @@ export const NewNoticePage = () => {
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
   const [category, setCategory] = useState(""); // Estado para la categoría seleccionada
-
-  // Maneja la carga de archivos
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result); // Convierte el archivo a base64 para mostrar la imagen
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Maneja el arrastre y la caída de archivos
-  const handleDrop = (event) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   // Maneja el evento de guardar
   const handleSave = () => {
@@ -62,7 +36,6 @@ export const NewNoticePage = () => {
       author,
       url,
       content,
-      image,
       category,
     };
 
@@ -99,7 +72,6 @@ export const NewNoticePage = () => {
     setAuthor("");
     setUrl("");
     setContent("");
-    setImage(null);
     setCategory(""); // Resetea la categoría
   };
 
@@ -197,36 +169,6 @@ export const NewNoticePage = () => {
                       onChange={(e) => setUrl(e.target.value)}
                       margin="normal"
                     />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      style={{ display: "block", marginTop: 10 }}
-                    />
-                    <div
-                      onDrop={handleDrop}
-                      onDragOver={(e) => e.preventDefault()}
-                      style={{
-                        border: "2px dashed #ccc",
-                        borderRadius: "5px",
-                        padding: "10px",
-                        textAlign: "center",
-                        marginTop: 10,
-                      }}
-                    >
-                      Arrastra y suelta una imagen aquí
-                    </div>
-                    {image && (
-                      <img
-                        src={image}
-                        alt="Preview"
-                        style={{
-                          marginTop: 10,
-                          maxWidth: "100%",
-                          height: "auto",
-                        }}
-                      />
-                    )}
                   </Grid>
                 </Box>
                 <FormControl fullWidth margin="normal" sx={{ marginTop: 2 }}>
