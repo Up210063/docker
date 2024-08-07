@@ -15,6 +15,7 @@ import {
   InputLabel,
   Button,
 } from '@mui/material';
+import Slider from "react-slick"; // Importar el componente Slider
 import { LayoutCMS } from '../../common';
 import {
   fetchNBAStandings,
@@ -25,6 +26,9 @@ import {
   MlbStandingsTable,
 } from '../../Deportes/pages/standingsTables';
 import Opiniones from '../../../components/common/components/Opiniones';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 export const DeportesPage = () => {
   const [contentTabValue, setContentTabValue] = useState(0); // Estado para las pestañas de contenido
@@ -106,6 +110,33 @@ export const DeportesPage = () => {
     },
   };
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          initialSlide: 1
+        }
+      }
+    ]
+  };
+
   return (
     <LayoutCMS>
       <Grid item xs={12} md={12} lg={9} className='deportes-top'>
@@ -130,36 +161,40 @@ export const DeportesPage = () => {
             </Card>
           </Grid>
 
-          {/* Mostrar las siguientes tres noticias de deportes obtenidas de la API */}
-          {loading ? (
-            <Typography variant="body2" align="center">Cargando noticias de deportes...</Typography>
-          ) : error ? (
-            <Typography variant="body2" align="center" color="error">{error}</Typography>
-          ) : sportsNews.length > 0 ? (
-            sportsNews.slice(0, 3).map((newsItem, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Card sx={cardStyle}>
-                  <CardMedia
-                    component="img"
-                    height="220"
-                    image={newsItem.img || "https://via.placeholder.com/220"} // URL de imagen desde la API
-                    alt={newsItem.title || 'Noticia sin título'}
-                    onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/220"; }} // Manejo de error de imagen
-                  />
-                  <CardContent>
-                    <Typography mb={1} variant="body2" color="text.secondary">
-                      {newsItem.content}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <Button variant="text">Leer más</Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))
-          ) : (
-            <Typography variant="body2" align="center">No hay noticias de deportes disponibles</Typography>
-          )}
+          {/* Carrusel para las noticias de deportes */}
+          <Grid item xs={12} sm={6} md={9}>
+            {loading ? (
+              <Typography variant="body2" align="center">Cargando noticias de deportes...</Typography>
+            ) : error ? (
+              <Typography variant="body2" align="center" color="error">{error}</Typography>
+            ) : sportsNews.length > 0 ? (
+              <Slider {...settings}>
+                {sportsNews.map((newsItem, index) => (
+                  <div key={index}>
+                    <Card sx={cardStyle} style={{ margin: '0 10px' }}>
+                      <CardMedia
+                        component="img"
+                        height="220"
+                        image={newsItem.img || "https://via.placeholder.com/220"} // URL de imagen desde la API
+                        alt={newsItem.title || 'Noticia sin título'}
+                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/220"; }} // Manejo de error de imagen
+                      />
+                      <CardContent>
+                        <Typography mb={1} variant="body2" color="text.secondary">
+                          {newsItem.content}
+                        </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <Button variant="text">Leer más</Button>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </Slider>
+            ) : (
+              <Typography variant="body2" align="center">No hay noticias de deportes disponibles</Typography>
+            )}
+          </Grid>
         </Grid>
       </Grid>
 
