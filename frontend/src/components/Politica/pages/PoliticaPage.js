@@ -15,7 +15,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { LayoutCMS } from '../../common';
 import Slider from 'react-slick';
 
-// Importar estilos de slick-carousel
+// Import styles from slick-carousel
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -24,7 +24,7 @@ export const PoliticaPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Configuración del carrusel
+  // Carousel configuration
   const settings = {
     dots: true,
     infinite: true,
@@ -52,19 +52,18 @@ export const PoliticaPage = () => {
     ]
   };
 
-  // Ajuste del estilo de las tarjetas para reducir la escala en el hover
   const cardStyle = {
-    height: "320px", // Reducir la altura de las tarjetas
+    height: "370px",
     border: '1px solid #ddd',
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     position: 'relative',
     '&:hover': {
-      transform: 'scale(1.02)',  // Cambiar la escala a 1.02 para reducir el efecto
+      transform: 'scale(1.03)', // Reduce the scale factor for hover effect
       boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
     },
   };
 
-  // Obtener las noticias de política desde la API
+  // Fetch political news from the API
   useEffect(() => {
     const fetchPoliticalNews = async () => {
       setLoading(true);
@@ -135,36 +134,40 @@ export const PoliticaPage = () => {
               <Typography variant="body2" align="center">Cargando noticias de política...</Typography>
             ) : error ? (
               <Typography variant="body2" align="center" color="error">{error}</Typography>
-            ) : politicalNews.length > 0 ? (
-              <Box sx={{ marginBottom: '40px' }}> {/* Añadir espacio inferior */}
-                <Slider {...settings}>
-                  {politicalNews.map((newsItem, index) => (
-                    <div key={index}>
-                      <Card sx={cardStyle} style={{ margin: '0 10px' }}>
-                        <CardMedia
-                          component="img"
-                          height="200" // Ajuste de la altura de la imagen
-                          image={newsItem.img || "https://via.placeholder.com/200"}
-                          alt={newsItem.title || 'Noticia sin título'}
-                          onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/200"; }}
-                        />
-                        <CardContent>
-                          <Typography variant="h6">{newsItem.title}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {newsItem.content}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  ))}
-                </Slider>
-              </Box>
             ) : (
-              <Typography variant="body2" align="center">No hay noticias de política disponibles</Typography>
+              <Slider {...settings}>
+                {politicalNews.length > 0 ? politicalNews.map((newsItem, index) => (
+                  <div key={index}>
+                    <Card sx={cardStyle} style={{ margin: '0 10px' }}>
+                      <CardMedia
+                        component="img"
+                        height="250"
+                        image={newsItem.img || "https://via.placeholder.com/250"}
+                        alt={newsItem.title || 'Noticia sin título'}
+                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/250"; }}
+                      />
+                      <CardContent>
+                        <Typography variant="h6">{newsItem.title}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {newsItem.content}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )) : (
+                  <div>
+                    <Card sx={cardStyle} style={{ margin: '0 10px' }}>
+                      <CardContent>
+                        <Typography variant="body2" align="center">No hay noticias de política disponibles</Typography>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </Slider>
             )}
           </Grid>
         </Grid>
       </Grid>
     </LayoutCMS>
   );
-}
+};

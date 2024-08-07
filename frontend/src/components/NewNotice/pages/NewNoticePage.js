@@ -15,13 +15,13 @@ import {
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import ProgressSidebar from "./ProgressSidebar";
-import { Header } from "../../common/components/Header";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export const NewNoticePage = () => {
-  const { state } = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [noticeId, setNoticeId] = useState(null); // Store the ID of the notice if editing
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(dayjs());
   const [author, setAuthor] = useState("");
@@ -30,61 +30,65 @@ export const NewNoticePage = () => {
   const [category, setCategory] = useState("");
 
   useEffect(() => {
-    // Si hay datos de una noticia en el estado, cargarlos
-    if (state?.notice) {
-      const { title, date, author, img, content, category } = state.notice;
-      setTitle(title);
-      setDate(dayjs(date));
-      setAuthor(author);
-      setUrl(img);
-      setContent(content);
-      setCategory(category);
+    // If editing, pre-fill the form with the existing notice data
+    if (location.state && location.state.notice) {
+      const notice = location.state.notice;
+      setNoticeId(notice.id); // Capture the notice ID for editing
+      setTitle(notice.title);
+      setDate(dayjs(notice.date));
+      setAuthor(notice.author);
+      setUrl(notice.img);
+      setContent(notice.content);
+      setCategory(notice.category);
     }
-  }, [state]);
+  }, [location.state]);
 
-  const handleSave = () => {
+  // Handle save for both creating and editing
+  const handleSave = async () => {
     const newNotice = {
       title,
       date: date.format("YYYY-MM-DD"),
       author,
       content,
       category,
-      img: url,
+      img: url, // Use the correct key for the image URL
     };
 
-    console.log("Guardando noticia:", newNotice);
+    try {
+      let response;
+      if (noticeId) {
+        // Edit existing notice
+        response = await fetch(`http://localhost:8080/api/notices/${noticeId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newNotice),
+        });
+      } else {
+        // Create new notice
+        response = await fetch("http://localhost:8080/api/notices/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newNotice),
+        });
+      }
 
-    // Decide si es una nueva noticia o una actualización
-    const requestMethod = state?.notice ? "PUT" : "POST";
-    const apiEndpoint = state?.notice
-      ? `http://localhost:8080/api/notices/${state.notice.id}`
-      : "http://localhost:8080/api/notices/create";
-
-    // Enviar los datos a la ruta especificada usando fetch
-    fetch(apiEndpoint, {
-      method: requestMethod,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newNotice),
-    })
-      .then((response) => {
-        if (response.ok) {
-          alert("Noticia guardada exitosamente");
-          navigate("/lista-noticias"); // Redirigir a la lista de noticias
-        } else {
-          alert("Error al guardar la noticia");
-        }
-      })
-      .catch((error) => {
-        console.error("Error al guardar la noticia:", error);
+      if (response.ok) {
+        alert(noticeId ? "Noticia actualizada exitosamente" : "Noticia guardada exitosamente");
+        navigate('/lista-noticias');
+      } else {
         alert("Error al guardar la noticia");
-      });
-
-    // Resetea el formulario después de guardar
-    resetForm();
+      }
+    } catch (error) {
+      console.error("Error al guardar la noticia:", error);
+      alert("Error de red al guardar la noticia");
+    }
   };
 
+  // Reset form fields
   const resetForm = () => {
     setTitle("");
     setDate(dayjs());
@@ -92,23 +96,14 @@ export const NewNoticePage = () => {
     setUrl("");
     setContent("");
     setCategory("");
+    setNoticeId(null); // Reset notice ID
   };
 
   return (
     <div>
-      <Header />
       <Container>
         <Grid container spacing={2} style={{ marginTop: 20 }}>
-          <Grid className={"new-notice-progress"} item xs={3}>
-            <ProgressSidebar
-              title={title}
-              date={date}
-              author={author}
-              url={url}
-              content={content}
-            />
-          </Grid>
-          <Grid item xs={12} md={9} className="new-notice-container">
+          <Grid item xs={12} md={9}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Paper
@@ -199,19 +194,25 @@ export const NewNoticePage = () => {
                     <MenuItem value="Deportes">Deportes</MenuItem>
                     <MenuItem value="Clima">Clima</MenuItem>
                     <MenuItem value="Entretenimiento">Entretenimiento</MenuItem>
-                    <MenuItem value="Politica">Política</MenuItem>
+                    <MenuItem value="Política">Política</MenuItem>
                   </Select>
                 </FormControl>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSave}
-                  style={{ marginTop: 20 }}
-                >
-                  Guardar Noticia
-                </Button>
               </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Box display="flex" justifyContent="flex-end" mt={2}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{ marginRight: 2 }}
+                  onClick={resetForm}
+                >
+                  Cancelar
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleSave}>
+                  {noticeId ? "Actualizar" : "Guardar"}
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </Grid>
