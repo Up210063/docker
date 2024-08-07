@@ -1,4 +1,3 @@
-// NoticeController.java
 package com.example.p02.controller;
 
 import com.example.p02.dto.NoticeDTO;
@@ -23,7 +22,6 @@ public class NoticeController {
         return ResponseEntity.ok(notices);
     }
 
-    // Método para obtener noticias por categoría
     @GetMapping("/category/{category}")
     public ResponseEntity<List<NoticeDTO>> getNoticesByCategory(@PathVariable String category) {
         List<NoticeDTO> notices = noticeService.getNoticesByCategory(category);
@@ -36,8 +34,18 @@ public class NoticeController {
             noticeService.saveNotice(noticeDTO);
             return ResponseEntity.ok("Noticia guardada exitosamente");
         } catch (Exception e) {
-            // Asegúrate de que HttpStatus esté correctamente importado
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar la noticia");
+        }
+    }
+
+    // Método para actualizar una noticia existente
+    @PutMapping("/{id}")
+    public ResponseEntity<NoticeDTO> updateNotice(@PathVariable Long id, @RequestBody NoticeDTO noticeDTO) {
+        try {
+            NoticeDTO updatedNotice = noticeService.updateNotice(id, noticeDTO);
+            return ResponseEntity.ok(updatedNotice);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

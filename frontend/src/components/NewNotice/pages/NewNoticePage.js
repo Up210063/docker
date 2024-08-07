@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Container,
@@ -17,34 +17,52 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ProgressSidebar from "./ProgressSidebar";
 import { Header } from "../../common/components/Header";
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const NewNoticePage = () => {
+  const { state } = useLocation();
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(dayjs());
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState(""); // Estado para la categoría seleccionada
+  const [category, setCategory] = useState("");
 
-  const navigate = useNavigate(); // Inicializar useNavigate
+  useEffect(() => {
+    // Si hay datos de una noticia en el estado, cargarlos
+    if (state?.notice) {
+      const { title, date, author, img, content, category } = state.notice;
+      setTitle(title);
+      setDate(dayjs(date));
+      setAuthor(author);
+      setUrl(img);
+      setContent(content);
+      setCategory(category);
+    }
+  }, [state]);
 
-  // Maneja el evento de guardar
   const handleSave = () => {
     const newNotice = {
       title,
-      date: date.format("YYYY-MM-DD"), // Formato de fecha
+      date: date.format("YYYY-MM-DD"),
       author,
       content,
       category,
-      img: url, // Asegúrate de incluir la URL de la imagen
+      img: url,
     };
 
     console.log("Guardando noticia:", newNotice);
 
+    // Decide si es una nueva noticia o una actualización
+    const requestMethod = state?.notice ? "PUT" : "POST";
+    const apiEndpoint = state?.notice
+      ? `http://localhost:8080/api/notices/${state.notice.id}`
+      : "http://localhost:8080/api/notices/create";
+
     // Enviar los datos a la ruta especificada usando fetch
-    fetch("http://localhost:8080/api/notices/create", {
-      method: "POST",
+    fetch(apiEndpoint, {
+      method: requestMethod,
       headers: {
         "Content-Type": "application/json",
       },
@@ -53,7 +71,7 @@ export const NewNoticePage = () => {
       .then((response) => {
         if (response.ok) {
           alert("Noticia guardada exitosamente");
-          navigate('/lista-noticias'); // Redirigir a la lista de noticias
+          navigate("/lista-noticias"); // Redirigir a la lista de noticias
         } else {
           alert("Error al guardar la noticia");
         }
@@ -67,14 +85,13 @@ export const NewNoticePage = () => {
     resetForm();
   };
 
-  // Resetea los campos del formulario
   const resetForm = () => {
     setTitle("");
     setDate(dayjs());
     setAuthor("");
     setUrl("");
     setContent("");
-    setCategory(""); // Resetea la categoría
+    setCategory("");
   };
 
   return (
@@ -101,7 +118,7 @@ export const NewNoticePage = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    height: "350px", // Aumentamos la altura
+                    height: "350px",
                   }}
                 >
                   <Typography variant="h6">Título</Typography>
@@ -124,7 +141,7 @@ export const NewNoticePage = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    height: "350px", // Aumentamos la altura
+                    height: "350px",
                   }}
                 >
                   <Typography variant="h6">Fecha</Typography>
@@ -136,7 +153,7 @@ export const NewNoticePage = () => {
                       onChange={(newValue) => setDate(newValue)}
                       renderInput={(params) => (
                         <TextField {...params} fullWidth sx={{ display: "none" }} />
-                      )} // Oculta el campo de entrada
+                      )}
                     />
                   </LocalizationProvider>
                 </Paper>
@@ -148,7 +165,7 @@ export const NewNoticePage = () => {
                 <TextField
                   fullWidth
                   multiline
-                  rows={15} // Aumentamos el número de filas para el contenido
+                  rows={15}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   margin="normal"
@@ -182,25 +199,19 @@ export const NewNoticePage = () => {
                     <MenuItem value="Deportes">Deportes</MenuItem>
                     <MenuItem value="Clima">Clima</MenuItem>
                     <MenuItem value="Entretenimiento">Entretenimiento</MenuItem>
-                    <MenuItem value="Política">Política</MenuItem>
+                    <MenuItem value="Politica">Política</MenuItem>
                   </Select>
                 </FormControl>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Box display="flex" justifyContent="flex-end" mt={2}>
                 <Button
+                  fullWidth
                   variant="contained"
-                  color="secondary"
-                  sx={{ marginRight: 2 }}
-                  onClick={resetForm} // Resetear el formulario al cancelar
+                  color="primary"
+                  onClick={handleSave}
+                  style={{ marginTop: 20 }}
                 >
-                  Cancelar
+                  Guardar Noticia
                 </Button>
-                <Button variant="contained" color="primary" onClick={handleSave}>
-                  Guardar
-                </Button>
-              </Box>
+              </Paper>
             </Grid>
           </Grid>
         </Grid>
