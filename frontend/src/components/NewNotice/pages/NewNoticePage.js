@@ -37,6 +37,7 @@ export const NewNoticePage = () => {
       author,
       content,
       category,
+      img: url, // Asegúrate de incluir la URL de la imagen
     };
 
     console.log("Guardando noticia:", newNotice);

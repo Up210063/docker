@@ -15,16 +15,19 @@ public class NoticeMapper {
         notice.setContent(noticeDTO.getContent());
         notice.setAuthor(noticeDTO.getAuthor());
         notice.setCategory(noticeDTO.getCategory());
+        notice.setImg(noticeDTO.getImg());
         return notice;
     }
 
     public NoticeDTO toDto(Notice notice) {
         NoticeDTO noticeDTO = new NoticeDTO();
+        noticeDTO.setId(notice.getId());
         noticeDTO.setTitle(notice.getTitle());
         noticeDTO.setDate(notice.getDate());
         noticeDTO.setContent(notice.getContent());
         noticeDTO.setAuthor(notice.getAuthor());
         noticeDTO.setCategory(notice.getCategory());
+        noticeDTO.setImg(notice.getImg());
         return noticeDTO;
     }
 }

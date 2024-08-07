@@ -20,7 +20,7 @@ public class Notice {
     private String title;
 
     @Column(nullable = false)
-    private String date;
+    private String date; // O puedes usar LocalDate si prefieres un tipo de dato de fecha más fuerte
 
     @Column(nullable = false)
     private String content;
@@ -30,4 +30,7 @@ public class Notice {
 
     @Column(nullable = false)
     private String category;
+
+    @Column(nullable = false)
+    private String img; // Asegúrate de tener este campo para la imagen
 }
