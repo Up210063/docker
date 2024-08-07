@@ -1,3 +1,4 @@
+// NoticeController.java
 package com.example.p02.controller;
 
 import com.example.p02.dto.NoticeDTO;
@@ -38,14 +39,14 @@ public class NoticeController {
         }
     }
 
-    // Método para actualizar una noticia existente
-    @PutMapping("/{id}")
-    public ResponseEntity<NoticeDTO> updateNotice(@PathVariable Long id, @RequestBody NoticeDTO noticeDTO) {
+    // Método para eliminar una noticia
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteNotice(@PathVariable Long id) {
         try {
-            NoticeDTO updatedNotice = noticeService.updateNotice(id, noticeDTO);
-            return ResponseEntity.ok(updatedNotice);
+            noticeService.deleteNotice(id);
+            return ResponseEntity.ok("Noticia eliminada exitosamente");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la noticia");
         }
     }
 }

@@ -1,3 +1,4 @@
+// NoticeService.java
 package com.example.p02.service;
 
 import com.example.p02.dto.NoticeDTO;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,23 +39,8 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
-    // Método para actualizar una noticia existente
-    public NoticeDTO updateNotice(Long id, NoticeDTO noticeDTO) throws Exception {
-        Optional<Notice> optionalNotice = noticeRepository.findById(id);
-
-        if (optionalNotice.isPresent()) {
-            Notice notice = optionalNotice.get();
-            notice.setTitle(noticeDTO.getTitle());
-            notice.setDate(noticeDTO.getDate());
-            notice.setContent(noticeDTO.getContent());
-            notice.setAuthor(noticeDTO.getAuthor());
-            notice.setCategory(noticeDTO.getCategory());
-            notice.setImg(noticeDTO.getImg());
-
-            Notice updatedNotice = noticeRepository.save(notice);
-            return noticeMapper.toDto(updatedNotice);
-        } else {
-            throw new Exception("Noticia no encontrada");
-        }
+    // Método para eliminar una noticia
+    public void deleteNotice(Long id) {
+        noticeRepository.deleteById(id);
     }
 }

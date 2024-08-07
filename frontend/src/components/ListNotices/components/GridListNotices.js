@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+// src/components/ListNotices/components/GridListNotices.js
+
+import React from "react";
 import {
   Card,
   CardContent,
@@ -12,11 +14,32 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 
-export const GridListNotices = ({ notices, onDelete }) => {
+export const GridListNotices = ({ notices }) => {
   const navigate = useNavigate();
 
-  const handleEditClick = (notice) => {
-    navigate("/nueva-noticia", { state: { notice } }); // Navigate with state
+  // Handler to delete a notice
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/notices/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        alert("Noticia eliminada exitosamente");
+        window.location.reload(); // Refresh the page to update the list
+      } else {
+        const errorMessage = await response.text(); // Read the error message from the response
+        alert(`Error al eliminar la noticia: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error("Error al eliminar la noticia:", error);
+      alert("Error de red al eliminar la noticia");
+    }
+  };
+
+  // Handler to edit a notice
+  const handleEdit = (notice) => {
+    navigate("/nueva-noticia", { state: { notice } });
   };
 
   return (
@@ -62,10 +85,10 @@ export const GridListNotices = ({ notices, onDelete }) => {
                 alignItems={"center"}
                 justifyContent={"flex-end"}
               >
-                <IconButton onClick={() => onDelete(notice.id)}>
+                <IconButton onClick={() => handleDelete(notice.id)}>
                   <DeleteIcon />
                 </IconButton>
-                <IconButton onClick={() => handleEditClick(notice)}>
+                <IconButton onClick={() => handleEdit(notice)}>
                   <EditIcon />
                 </IconButton>
               </Box>
