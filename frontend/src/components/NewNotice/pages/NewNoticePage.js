@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Container,
   Grid,
@@ -19,6 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ProgressSidebar from "./ProgressSidebar";
 import { Header } from "../../common/components/Header";
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 
 export const NewNoticePage = () => {
   const [title, setTitle] = useState("");
@@ -28,13 +27,14 @@ export const NewNoticePage = () => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState(""); // Estado para la categoría seleccionada
 
+  const navigate = useNavigate(); // Inicializar useNavigate
+
   // Maneja el evento de guardar
   const handleSave = () => {
     const newNotice = {
       title,
       date: date.format("YYYY-MM-DD"), // Formato de fecha
       author,
-      url,
       content,
       category,
     };
@@ -42,7 +42,7 @@ export const NewNoticePage = () => {
     console.log("Guardando noticia:", newNotice);
 
     // Enviar los datos a la ruta especificada usando fetch
-    fetch("http://localhost:3000/lista-noticias", {
+    fetch("http://localhost:8080/api/notices/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,6 +52,7 @@ export const NewNoticePage = () => {
       .then((response) => {
         if (response.ok) {
           alert("Noticia guardada exitosamente");
+          navigate('/lista-noticias'); // Redirigir a la lista de noticias
         } else {
           alert("Error al guardar la noticia");
         }

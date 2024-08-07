@@ -1,33 +1,33 @@
+// Notice.java
 package com.example.p02.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import java.time.*;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name="noticia")
+@Table(name = "notices")
 public class Notice {
     @Id
-    @Column(name="id_noticia")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long idNoticia;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String titulo;
+    @Column(nullable = false)
+    private String title;
 
-    private String contenido;
+    @Column(nullable = false)
+    private String date;
 
-    private String resumen;
+    @Column(nullable = false)
+    private String content;
 
-    private LocalDate fechaPublicacion;
+    @Column(nullable = false)
+    private String author;
 
-    private String url;
-
-    private Long idAutor;
-   
+    @Column(nullable = false)
+    private String category;
 }

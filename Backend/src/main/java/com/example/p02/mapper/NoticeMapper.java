@@ -1,25 +1,30 @@
+// NoticeMapper.java
 package com.example.p02.mapper;
-
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.InjectionStrategy;
 
 import com.example.p02.dto.NoticeDTO;
 import com.example.p02.model.Notice;
-import java.util.List;
+import org.springframework.stereotype.Component;
 
-@Mapper(
-  componentModel = "spring",
-  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-)
-public interface NoticeMapper {
+@Component
+public class NoticeMapper {
 
-  NoticeDTO toDTO(Notice model);
+    public Notice toEntity(NoticeDTO noticeDTO) {
+        Notice notice = new Notice();
+        notice.setTitle(noticeDTO.getTitle());
+        notice.setDate(noticeDTO.getDate());
+        notice.setContent(noticeDTO.getContent());
+        notice.setAuthor(noticeDTO.getAuthor());
+        notice.setCategory(noticeDTO.getCategory());
+        return notice;
+    }
 
-  List<NoticeDTO> toDTO(List<Notice> model);
-
-  @Mapping(target = "idNoticia", ignore = true)
-  Notice toModel(NoticeDTO dto);
+    public NoticeDTO toDto(Notice notice) {
+        NoticeDTO noticeDTO = new NoticeDTO();
+        noticeDTO.setTitle(notice.getTitle());
+        noticeDTO.setDate(notice.getDate());
+        noticeDTO.setContent(notice.getContent());
+        noticeDTO.setAuthor(notice.getAuthor());
+        noticeDTO.setCategory(notice.getCategory());
+        return noticeDTO;
+    }
 }
