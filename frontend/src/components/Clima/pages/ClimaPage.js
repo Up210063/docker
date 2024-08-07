@@ -20,11 +20,12 @@ export const ClimaPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState('');
+  const [climateNews, setClimateNews] = useState([]); // Estado para las noticias de clima
 
   const handleLocationObtained = ({ latitude, longitude }) => {
     fetchWeatherData(latitude, longitude)
       .then(data => {
-        console.log(data); // Verifica la respuesta de la API
+        console.log("Datos del clima obtenidos:", data); // Verifica la respuesta de la API
         setWeatherData(data);
         setLoading(false);
       })
@@ -89,6 +90,32 @@ export const ClimaPage = () => {
     return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonte
   }, []);
 
+  // Petición para obtener noticias de clima
+  useEffect(() => {
+    setLoading(true);
+    console.log("Realizando petición fetch para obtener noticias de clima..."); // Log antes de la solicitud
+
+    fetch("http://localhost:8080/api/notices/category/clima")
+      .then(response => {
+        console.log("Respuesta recibida:", response); // Log para verificar la respuesta de la API
+
+        if (!response.ok) {
+          throw new Error('Error al obtener las noticias de clima');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Datos de noticias de clima recibidos:", data); // Log de los datos recibidos
+        setClimateNews(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error al obtener las noticias de clima:", error); // Log de errores
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <LayoutCMS>
       <LocationProvider
@@ -117,101 +144,24 @@ export const ClimaPage = () => {
 
           <Typography variant="h6" align="center" style={{ marginTop: 30, marginBottom: 30 }} textAlign={"left"} fontWeight={"bold"}>Últimas Noticias sobre el Clima</Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4} md={4}>
-              <Card sx={hoverEffectStyles}>
-                <CardMedia
-                  component="img"
-                  height="240"
-                  image="https://imagens.ebc.com.br/NIaL1xHAQmZYigUk4LRjiXzUr08=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/2024/03/22/_mg_0378.jpg?itok=GeXBmcOS"
-                  alt="Noticia 1"
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary" align="center">
-                    {`Párrafo de texto con un `}<MuiLink href="#">enlace no asignado</MuiLink>.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} sm={4} md={4}>
-              <Card sx={hoverEffectStyles}>
-                <CardMedia
-                  component="img"
-                  height="240"
-                  image="https://www.nmas.com.mx/_next/image/?url=https%3A%2F%2Fstatic-live.nmas.com.mx%2Fnmas-news%2Fstyles%2Fcorte_16_9%2Fcloud-storage%2F2023-11%2Facapulco-otis-apoyos-amlo.jpg%3Fh%3D920929c4%26itok%3DTljX35jc&w=1920&q=75"
-                  alt="Noticia 2"
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary" align="center">
-                    {`Párrafo de texto con un `}<MuiLink href="#">enlace no asignado</MuiLink>.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} sm={4} md={4}>
-              <Card sx={hoverEffectStyles}>
-                <CardMedia
-                  component="img"
-                  height="240"
-                  image="https://larepublica.cronosmedia.glr.pe/original/2024/01/09/659dbb20324d0b6bf724c4e8.jpg"
-                  alt="Noticia 3"
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary" align="center">
-                    {`Párrafo de texto con un `}<MuiLink href="#">enlace no asignado</MuiLink>.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} sm={4} md={4}>
-              <Card sx={hoverEffectStyles}>
-                <CardMedia
-                  component="img"
-                  height="240"
-                  image="https://tvazteca.brightspotcdn.com/dims4/default/96f05d6/2147483647/strip/true/crop/1500x1000+0+0/resize/968x645!/format/jpg/quality/90/?url=http%3A%2F%2Ftv-azteca-brightspot.s3.amazonaws.com%2Fb7%2Fa7%2F411e761340ac906a30f1c2e7cbdd%2Fheladas.jpg"
-                  alt="Noticia 4"
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary" align="center">
-                    {`Párrafo de texto con un `}<MuiLink href="#">enlace no asignado</MuiLink>.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} sm={4} md={4}>
-              <Card sx={hoverEffectStyles}>
-                <CardMedia
-                  component="img"
-                  height="240"
-                  image="https://cdn.unotv.com/images/2023/11/lluvias-en-cdmx-044707-041851.jpg"
-                  alt="Noticia 5"
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary" align="center">
-                    {`Párrafo de texto con un `}<MuiLink href="#">enlace no asignado</MuiLink>.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} sm={4} md={4}>
-              <Card sx={hoverEffectStyles}>
-                <CardMedia
-                  component="img"
-                  height="240"
-                  image="https://www.nmas.com.mx/_next/image/?url=https%3A%2F%2Fstatic-live.nmas.com.mx%2Fnmas-news%2Fstyles%2Fcorte_16_9%2Fcloud-storage%2F2023-11%2Fclima-frio-tijuana.jpg%3Fh%3D920929c4%26itok%3D9SndVk2z&w=1920&q=75"
-                  alt="Noticia 6"
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary" align="center">
-                    {`Párrafo de texto con un `}<MuiLink href="#">enlace no asignado</MuiLink>.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+            {climateNews.map((newsItem, index) => (
+              <Grid item xs={12} sm={4} md={4} key={index}>
+                <Card sx={hoverEffectStyles}>
+                  <CardMedia
+                    component="img"
+                    height="240"
+                    image={newsItem.img || "https://via.placeholder.com/240"}
+                    alt={newsItem.title}
+                  />
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary" align="center" gutterBottom>
+                      {newsItem.content} {/* Mostrar contenido de la noticia */}
+                    </Typography>
+                    <Button variant='outlined' size='small' color='primary'>Leer más</Button> {/* Botón "Leer más" con estilo consistente */}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Grid>
 
@@ -223,7 +173,7 @@ export const ClimaPage = () => {
                 <Typography variant="body2" align="center">Cargando datos del clima...</Typography>
               ) : error ? (
                 <Typography variant="body2" align="center" color="error">{error}</Typography>
-              ) : (
+              ) : weatherData ? ( // Verificar si weatherData no es null antes de acceder a sus propiedades
                 <Box display="flex" flexDirection="column" alignItems="center">
                   <Typography variant="h6" align="center">Clima Actual</Typography>
                   <Divider style={{ marginBottom: 10 }} />
@@ -239,6 +189,8 @@ export const ClimaPage = () => {
                     {`Tiempo restante del día: ${timeRemaining}`}
                   </Typography>
                 </Box>
+              ) : (
+                <Typography variant="body2" align="center" color="error">Datos del clima no disponibles</Typography>
               )}
             </CardContent>
           </Card>

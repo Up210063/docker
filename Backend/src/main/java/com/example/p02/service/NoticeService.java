@@ -27,6 +27,14 @@ public class NoticeService {
                 .collect(Collectors.toList());
     }
 
+    // Nuevo método para obtener noticias por categoría
+    public List<NoticeDTO> getNoticesByCategory(String category) {
+        List<Notice> notices = noticeRepository.findByCategory(category);
+        return notices.stream()
+                .map(noticeMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     public void saveNotice(NoticeDTO noticeDTO) {
         Notice notice = noticeMapper.toEntity(noticeDTO);
         noticeRepository.save(notice);
